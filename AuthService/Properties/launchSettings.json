@@ -1,0 +1,64 @@
+{
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "KEYCLOAK_ROOTURL": "http://localhost:8080/realms/tweeter-realm",
+        "KEYCLOAK_CLIENTID": "tweeter-auth",
+        "KEYCLOAK_CLIENTSECRET": "0kLwr5g41qWuYGYGXBkLHjD5njBrH4Iu"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:5099"
+    },
+    "https": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "KEYCLOAK_ROOTURL": "http://localhost:8080/realms/tweeter-realm",
+        "KEYCLOAK_CLIENTID": "tweeter-auth",
+        "KEYCLOAK_CLIENTSECRET": "0kLwr5g41qWuYGYGXBkLHjD5njBrH4Iu"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://localhost:7062;http://localhost:5099"
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Developmentv",
+        "KEYCLOAK_ROOTURL": "http:/localhost:8080/realms/tweeter-realm",
+        "KEYCLOAK_CLIENTID": "tweeter-auth",
+        "KEYCLOAK_CLIENTSECRET": "0kLwr5g41qWuYGYGXBkLHjD5njBrH4Iu"
+      }
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
+      "environmentVariables": {
+        "ASPNETCORE_HTTPS_PORTS": "8081",
+        "ASPNETCORE_HTTP_PORTS": "8080",
+        "KEYCLOAK_ROOTURL": "http://localhost:8080/realms/tweeter-realm",
+        "KEYCLOAK_CLIENTID": "tweeter-auth",
+        "KEYCLOAK_CLIENTSECRET": "0kLwr5g41qWuYGYGXBkLHjD5njBrH4Iu"
+      },
+      "publishAllPorts": true,
+      "useSSL": true
+    }
+  },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:18111",
+      "sslPort": 44377
+    }
+  }
+}
