@@ -5,7 +5,16 @@ namespace ProfileService.Data
 {
     public class ProfileServiceDbContext : DbContext
     {
-        public DbSet<UserProfile> Profiles { get; set; }
+        public virtual DbSet<UserProfile> Profiles { get; set; }
+
+        public ProfileServiceDbContext(DbContextOptions<ProfileServiceDbContext> options) : base(options)
+        {
+            Database.EnsureCreated();
+        }
+
+        public ProfileServiceDbContext() : base()
+        {
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -18,11 +27,6 @@ namespace ProfileService.Data
                 l => l.HasOne<UserProfile>().WithMany().HasForeignKey(p => p.ProfileId),
                 r => r.HasOne<UserProfile>().WithMany().HasForeignKey(p => p.FollowingId)
                 );
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer("Server=HACKERBOT;Database=profile_service_db;Trusted_Connection=True;Encrypt=no");
         }
     }
 }

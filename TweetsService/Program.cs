@@ -1,17 +1,10 @@
-using GatewayService;
-using GatewayService.Models;
-using GatewayService.ServiceCommunications;
-using GatewayService.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json.Serialization;
+using TweetsService.Data;
+using TweetsService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,13 +15,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton(typeof(EventsEmitter));
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddTransient<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddScoped(typeof(TweetsService.Services.TweetsService));
+builder.Services.AddScoped(typeof(CommentService));
+builder.Services.AddScoped(typeof(ReactionService));
 
-builder.Services.AddDbContext<AuthDbContext>(options =>
+builder.Services.AddDbContext<TweeterServiceDbContext>(options =>
 {
-    options.UseSqlServer("Server=user-db;Database=gateway_service_db;User Id=SA;Password=YourStrong!Passw0rd;Encrypt=no");
+    options.UseSqlServer("Server=twitter-db;Database=tweeter_service_db;User Id=SA;Password=YourStrong!Passw0rd;Encrypt=no");
 });
 
 builder.Services.AddAuthentication(options =>
@@ -36,13 +29,18 @@ builder.Services.AddAuthentication(options =>
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
+    .AddCookie(options =>
+    {
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.None;
+    })
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("My_Not_That_Little_Secret_That_Should_Be_Large_Enough_Now")),
-        ValidateIssuer = true,
+            ValidateIssuer = true,
             ValidIssuer = "auth-service",
             ValidateAudience = true,
             ValidAudience = "tweeter-services",
@@ -70,9 +68,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseCors();
-app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();

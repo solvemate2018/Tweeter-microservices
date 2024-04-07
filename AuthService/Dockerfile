@@ -6,6 +6,14 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS test
+WORKDIR /src
+COPY ["AuthService/AuthService.csproj", "AuthService/"]
+RUN dotnet restore "./AuthService/./AuthService.csproj"
+COPY . .
+WORKDIR "/src/AuthService"
+RUN dotnet test "./AuthService.csproj" -c Release --no-build  
+
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src

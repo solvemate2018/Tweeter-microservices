@@ -1,0 +1,77 @@
+version: '3.4'
+
+services:
+  tweets-service:
+    image: ${DOCKER_REGISTRY-}tweets-service
+    build:
+      context: .
+      dockerfile: TweetsService/Dockerfile
+    ports:
+       - 8070:8080
+    depends_on:
+    - twitter-db
+    - rabbitmq
+
+  profile-service:
+    image: ${DOCKER_REGISTRY-}profile-service
+    build:
+      context: .
+      dockerfile: ProfileService/Dockerfile
+    ports:
+      - 8060:8080
+    depends_on:
+    - profile-db
+    - rabbitmq
+
+  gateway-service:
+    image: ${DOCKER_REGISTRY-}auth-service
+    build:
+      context: .
+      dockerfile: AuthService/Dockerfile
+    ports:
+    - "8090:8090"
+    depends_on:
+    - profile-service
+    - tweets-service
+    - rabbitmq
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  user-db:
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1422:1433"
+    volumes:
+      - ./dbdata:/var/opt/profiledb
+
+  profile-db:
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./dbdata:/var/opt/profiledb
+
+  twitter-db:
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1444:1433"
+    volumes:
+      - ./dbdata:/var/opt/twitterdb
+
+volumes:
+  keycloak_data:
+    driver: local
